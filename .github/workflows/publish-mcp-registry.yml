@@ -3,7 +3,7 @@ name: Publish to the MCP Registry
 # QuoteBill is a remote server: nothing is built or packaged here. This only
 # publishes server.json to registry.modelcontextprotocol.io under
 # io.github.auto1225, proving the namespace with this repository's GitHub OIDC
-# token. Push a tag named after the server version (v1.4.2) to publish it.
+# token. Push a tag named after the server version (v2.0.0) to publish it.
 on:
   push:
     tags: ["v*"]
@@ -20,11 +20,16 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Check the endpoint answers before publishing it
+        # Members only since 2.0: without a token the endpoint must answer 401,
+        # point at its sign-in metadata, and that metadata must name the
+        # authorization server.
         run: |
-          curl -sf -X POST https://quotebill.com/mcp \
+          status=$(curl -s -o /dev/null -D headers.txt -w '%{http_code}' -X POST https://quotebill.com/mcp \
             -H 'content-type: application/json' -H 'accept: application/json' \
-            -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"registry-publish","version":"1"}}}' \
-            | grep -q '"serverInfo"'
+            -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"registry-publish","version":"1"}}}')
+          test "$status" = 401
+          grep -qi 'resource_metadata="https://quotebill.com/.well-known/oauth-protected-resource/mcp"' headers.txt
+          curl -sf https://quotebill.com/.well-known/oauth-protected-resource/mcp | grep -q '"authorization_servers"'
 
       - name: Install mcp-publisher
         run: |

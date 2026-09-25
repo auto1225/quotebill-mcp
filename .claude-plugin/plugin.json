@@ -1,6 +1,6 @@
 {
   "name": "quotebill",
-  "version": "1.4.2",
+  "version": "2.0.0",
   "description": "Draft quotations and invoices with QuoteBill: 133 templates, tax rules for 195 countries with sources, totals, and a link that opens the finished document.",
   "author": { "name": "QuoteBill", "email": "auto0104@gmail.com", "url": "https://quotebill.com" },
   "homepage": "https://quotebill.com/en/guides/connect-ai-assistants/",

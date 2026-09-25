@@ -13,7 +13,7 @@ Draft quotations and invoices from the AI assistant you already use. QuoteBill's
 |---|---|
 | Endpoint | `https://quotebill.com/mcp` |
 | Transport | Streamable HTTP (JSON responses) |
-| Authentication | None. Every tool is read-only and nothing is stored |
+| Authentication | OAuth 2.1 with a free QuoteBill account. Your AI app finds the sign-in by itself: it opens QuoteBill, you sign in (Google works) and choose **Allow** |
 | Protocol | 2026-07-28, and the handshake revisions 2025-03-26 to 2025-11-25 |
 | Languages | Answers in 33 languages |
 | Guide for people | [Use QuoteBill in ChatGPT, Claude and Gemini](https://quotebill.com/en/guides/connect-ai-assistants/) |
@@ -21,9 +21,11 @@ Draft quotations and invoices from the AI assistant you already use. QuoteBill's
 
 ## Connect
 
-**Claude** (claude.ai, desktop and mobile) — Settings → Connectors → Add custom connector. Name `QuoteBill`, URL `https://quotebill.com/mcp`. Or open this link: [add QuoteBill to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=QuoteBill&connectorUrl=https%3A%2F%2Fquotebill.com%2Fmcp).
+The first time you connect, your AI app opens QuoteBill in the browser. Sign in or sign up free, check which app is asking, and choose **Allow**. You do this once per app; you can disconnect an app at any time under **Connected AI apps** in QuoteBill's company settings.
 
-**ChatGPT** (chatgpt.com) — turn on developer mode in Settings, then create an app from the apps page: MCP server URL `https://quotebill.com/mcp`, authentication *No authentication*. Add QuoteBill from the **+** menu in a chat.
+**Claude** (claude.ai, desktop and mobile) — Settings → Connectors → Add custom connector. Name `QuoteBill`, URL `https://quotebill.com/mcp`, then **Connect**. Or open this link: [add QuoteBill to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=QuoteBill&connectorUrl=https%3A%2F%2Fquotebill.com%2Fmcp).
+
+**ChatGPT** (chatgpt.com) — turn on developer mode in Settings, then create an app from the apps page: MCP server URL `https://quotebill.com/mcp`, authentication *OAuth*. Sign in to QuoteBill and allow it, then add QuoteBill from the **+** menu in a chat.
 
 **Claude Code**
 
@@ -31,7 +33,9 @@ Draft quotations and invoices from the AI assistant you already use. QuoteBill's
 claude mcp add --transport http quotebill https://quotebill.com/mcp
 ```
 
-**Codex** — `~/.codex/config.toml`
+Then run `/mcp`, choose `quotebill` and sign in.
+
+**Codex** — `~/.codex/config.toml`, then `codex mcp login quotebill`
 
 ```toml
 [mcp_servers.quotebill]
@@ -50,13 +54,15 @@ or add it to `~/.gemini/settings.json`:
 { "mcpServers": { "quotebill": { "httpUrl": "https://quotebill.com/mcp" } } }
 ```
 
-**Cursor** — `.cursor/mcp.json`
+Then run `/mcp auth quotebill` once to sign in.
+
+**Cursor** — `.cursor/mcp.json` (Cursor opens the sign-in when you enable the server)
 
 ```json
 { "mcpServers": { "quotebill": { "url": "https://quotebill.com/mcp" } } }
 ```
 
-**VS Code** — `.vscode/mcp.json`
+**VS Code** — `.vscode/mcp.json` (VS Code asks you to sign in when the server starts)
 
 ```json
 { "servers": { "quotebill": { "type": "http", "url": "https://quotebill.com/mcp" } } }
@@ -68,6 +74,10 @@ or add it to `~/.gemini/settings.json`:
 /plugin marketplace add auto1225/quotebill-mcp
 /plugin install quotebill@quotebill
 ```
+
+### How the sign-in works
+
+A request without a token gets `401` with `WWW-Authenticate: Bearer resource_metadata="https://quotebill.com/.well-known/oauth-protected-resource/mcp"`. That metadata (RFC 9728) names the authorization server, Supabase Auth at `https://wgpfbcfiontxqusseoyv.supabase.co/auth/v1`, whose metadata (RFC 8414) offers dynamic client registration, PKCE and the `email` scope. MCP clients that follow the MCP authorization specification need nothing else.
 
 ## Tools
 
@@ -92,11 +102,11 @@ Every tool publishes an `inputSchema` and an `outputSchema`, and is annotated `r
 
 ## Privacy
 
-The server only looks up templates and tax rules and does arithmetic. It saves nothing and keeps no client names or amounts; its log records the tool, whether it answered and the client's name, never the arguments. A drafted document travels inside the returned link, after the `#`, which browsers never send to a server, and the link carries a checksum so an altered copy is refused rather than opened with a wrong figure. Calls are rate-limited per network address using a salted hash that changes every minute; those counts are deleted within an hour. See the [privacy notice](https://quotebill.com/en/privacy/).
+The server checks that the caller is a signed-in QuoteBill member, then only looks up templates and tax rules and does arithmetic. The sign-in token an AI app holds cannot read the member's saved documents, profile or files; the database refuses every token issued to an app. The server saves nothing and keeps no client names or amounts; its log records the tool, whether it answered and the client's name, never the arguments or the account. A drafted document travels inside the returned link, after the `#`, which browsers never send to a server, and the link carries a checksum so an altered copy is refused rather than opened with a wrong figure. Calls are rate-limited per account using a salted hash that changes every minute; those counts are deleted within an hour. See the [privacy notice](https://quotebill.com/en/privacy/).
 
 ## Limits
 
-- 60 tool calls per minute per network address
+- 60 tool calls per minute per account
 - Up to 200 line items and amounts up to 100,000,000,000 per line and per document
 - A published tax rate is a starting point, not tax advice: registration, place of supply and the treatment of the goods or services still have to be confirmed
 
