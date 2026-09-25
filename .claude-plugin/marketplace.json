@@ -1,6 +1,9 @@
 {
   "name": "quotebill",
   "owner": { "name": "QuoteBill", "email": "auto0104@gmail.com" },
+  "metadata": {
+    "description": "QuoteBill for Claude: draft quotations and invoices with 133 templates, tax rules for 195 countries and a link to the finished document."
+  },
   "plugins": [
     {
       "name": "quotebill",
