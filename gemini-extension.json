@@ -1,0 +1,11 @@
+{
+  "name": "quotebill",
+  "version": "1.4.2",
+  "description": "Draft quotations and invoices: 133 templates, tax rules for 195 countries with sources, and a link that opens the finished document on quotebill.com.",
+  "mcpServers": {
+    "quotebill": {
+      "httpUrl": "https://quotebill.com/mcp"
+    }
+  },
+  "contextFileName": "GEMINI.md"
+}

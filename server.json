@@ -1,0 +1,12 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.auto1225/quotebill",
+  "title": "QuoteBill",
+  "description": "Draft quotations and invoices: 133 templates, tax rules for 195 countries and a document link.",
+  "version": "1.4.2",
+  "websiteUrl": "https://quotebill.com/en/guides/connect-ai-assistants/",
+  "repository": { "url": "https://github.com/auto1225/quotebill-mcp", "source": "github" },
+  "remotes": [
+    { "type": "streamable-http", "url": "https://quotebill.com/mcp" }
+  ]
+}

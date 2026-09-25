@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "quotebill": {
+      "type": "http",
+      "url": "https://quotebill.com/mcp"
+    }
+  }
+}

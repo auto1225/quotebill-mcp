@@ -1,0 +1,11 @@
+{
+  "name": "quotebill",
+  "owner": { "name": "QuoteBill", "email": "auto0104@gmail.com" },
+  "plugins": [
+    {
+      "name": "quotebill",
+      "source": "./",
+      "description": "Draft quotations and invoices with QuoteBill: templates, tax rules for 195 countries and a link to the finished document."
+    }
+  ]
+}
