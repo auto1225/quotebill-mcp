@@ -2,12 +2,14 @@
 
 # QuoteBill MCP server
 
-Draft quotations and invoices from the AI assistant you already use. QuoteBill's remote MCP server gives ChatGPT, Claude, Gemini and any other MCP client:
+Draft quotations, invoices and the other documents of a sale from the AI assistant you already use. QuoteBill's remote MCP server gives ChatGPT, Claude, Gemini and any other MCP client:
 
-- **133 quotation and invoice templates** for trades, professional services, countries and languages
+- **Ten kinds of document**: quotation, invoice, proforma invoice, receipt, credit note, purchase order, delivery note, work order, statement of account and commercial invoice
+- **225 templates** for trades, professional services, countries and languages, covering every kind
 - **Tax rules for 195 countries**, each with the official source it was read from and the date it was checked
 - **Totals** worked out with the same arithmetic as the QuoteBill editor, rounded to the currency
-- **A link to the finished document**: `build_document` returns a URL that opens the drafted quotation or invoice, filled in, on [quotebill.com](https://quotebill.com), ready to download as Excel or Word or to save as a PDF
+- **A link to the finished document**: `build_document` returns a URL that opens the drafted document, filled in, on [quotebill.com](https://quotebill.com), ready to download as Excel or Word or to save as a PDF
+- **The next document in the flow**: `next_document` turns a drafted quotation into its invoice, an invoice into its receipt, credit note or delivery note, and so on, keeping the parties, lines, tax and language
 
 | | |
 |---|---|
@@ -87,7 +89,8 @@ A request without a token gets `401` with `WWW-Authenticate: Bearer resource_met
 | `get_template` | The full record for one template slug. |
 | `get_tax_rule` | The published rate, its name, the currency and the source it was read from, for any of 195 countries. Countries with no single national rate, such as the United States, are reported as needing a jurisdiction instead of being given a made-up number. |
 | `calculate_totals` | Adds up line items, applies discounts and the country's tax, rounding each tax component separately to the currency. |
-| `build_document` | Builds a complete quotation or invoice, totals it and returns a link that opens it filled in. `language` is the document's language; `interfaceLanguage` the language the page opens in. |
+| `build_document` | Builds a complete document of any of the ten kinds from line items, optionally from a template, totals it (or works out a statement's running balance) and returns a link that opens it filled in, with the documents it can become next. `language` is the document's language; `interfaceLanguage` the language the page opens in. |
+| `next_document` | Makes the next document from the link `build_document` or `next_document` returned: a quotation becomes an invoice, proforma invoice or work order; a proforma invoice an invoice, commercial invoice or prepayment receipt; an invoice a receipt, credit note or delivery note; a work order an invoice; a commercial invoice a delivery note, receipt or credit note. It keeps the parties, lines, country, tax and language, takes a new issue date and, where its kind prints a reference, names the document it came from. Only the link is read: no saved document is looked up, and nothing is saved. |
 | `list_guides` | QuoteBill's how-to guides, such as converting a quote to an invoice or what a German, Japanese or Korean invoice must contain. |
 | `list_reference` | The categories, layouts, languages and country codes the other tools accept. |
 
@@ -98,6 +101,8 @@ Every tool publishes an `inputSchema` and an `outputSchema`, and is annotated `r
 - "Make an invoice in QuoteBill for my client in Japan: website design ¥480,000, plus three months of maintenance at ¥25,000 a month, with 5% off the maintenance."
 - "Use QuoteBill to make a quotation for 12 hours of consulting at €95 an hour for a client in Germany."
 - "Find a QuoteBill template for a plumbing quotation and fill it in with these jobs."
+- "The client accepted that quotation: turn it into the invoice, number INV-2026-014."
+- "Make a proforma invoice in QuoteBill for 40 valves at $180 each, shipped to Vietnam, then the commercial invoice for the same shipment."
 - "What is the VAT rate in France, and where does QuoteBill get it from?"
 
 ## Privacy
