@@ -88,8 +88,8 @@ A request without a token gets `401` with `WWW-Authenticate: Bearer resource_met
 | `search_templates` | Finds templates by words, document type or category, in the language asked for, with example line items and the page each opens on. |
 | `get_template` | The full record for one template slug. |
 | `get_tax_rule` | The published rate, its name, the currency and the source it was read from, for any of 195 countries. Countries with no single national rate, such as the United States, are reported as needing a jurisdiction instead of being given a made-up number. |
-| `calculate_totals` | Adds up line items, applies discounts and the country's tax, rounding each tax component separately to the currency. |
-| `build_document` | Builds a complete document of any of the ten kinds from line items, optionally from a template, totals it (or works out a statement's running balance) and returns a link that opens it filled in, with the documents it can become next. `language` is the document's language; `interfaceLanguage` the language the page opens in. |
+| `calculate_totals` | Adds up line items, applies discounts and the country's tax, rounding each tax component separately to the currency (the country's, or the `currency` you give). |
+| `build_document` | Builds a complete document of any of the ten kinds from line items, optionally from a template, totals it (or works out a statement's running balance) and returns a link that opens it filled in, with the documents it can become next. `language` is the document's language; `interfaceLanguage` the language the page opens in; `currency` (an ISO 4217 code) is for amounts that are not in the country's currency, such as USD on a Korean exporter's invoice: the tax stays the country's. |
 | `next_document` | Makes the next document from the link `build_document` or `next_document` returned: a quotation becomes an invoice, proforma invoice or work order; a proforma invoice an invoice, commercial invoice or prepayment receipt; an invoice a receipt, credit note or delivery note; a work order an invoice; a commercial invoice a delivery note, receipt or credit note. It keeps the parties, lines, country, tax and language, takes a new issue date and, where its kind prints a reference, names the document it came from. Only the link is read: no saved document is looked up, and nothing is saved. |
 | `list_guides` | QuoteBill's how-to guides, such as converting a quote to an invoice or what a German, Japanese or Korean invoice must contain. |
 | `list_reference` | The categories, layouts, languages and country codes the other tools accept. |
@@ -100,6 +100,7 @@ Every tool publishes an `inputSchema` and an `outputSchema`, and is annotated `r
 
 - "Make an invoice in QuoteBill for my client in Japan: website design ¥480,000, plus three months of maintenance at ¥25,000 a month, with 5% off the maintenance."
 - "Use QuoteBill to make a quotation for 12 hours of consulting at €95 an hour for a client in Germany."
+- "Make a proforma invoice in QuoteBill from my Korean company for 40 valves at $180 each, in US dollars: keep Korea's tax rules."
 - "Find a QuoteBill template for a plumbing quotation and fill it in with these jobs."
 - "The client accepted that quotation: turn it into the invoice, number INV-2026-014."
 - "Make a proforma invoice in QuoteBill for 40 valves at $180 each, shipped to Vietnam, then the commercial invoice for the same shipment."
