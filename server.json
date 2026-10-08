@@ -3,7 +3,7 @@
   "name": "io.github.auto1225/quotebill",
   "title": "QuoteBill",
   "description": "Quotations, invoices, receipts and more: 225 templates, tax rules for 195 countries, free account.",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "websiteUrl": "https://quotebill.com/en/guides/connect-ai-assistants/",
   "repository": { "url": "https://github.com/auto1225/quotebill-mcp", "source": "github" },
   "remotes": [

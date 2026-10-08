@@ -70,7 +70,25 @@ Then run `/mcp auth quotebill` once to sign in.
 { "servers": { "quotebill": { "type": "http", "url": "https://quotebill.com/mcp" } } }
 ```
 
-**Claude Code plugin** — this repository is also a plugin marketplace:
+**Windsurf** — `~/.codeium/windsurf/mcp_config.json`
+
+```json
+{ "mcpServers": { "quotebill": { "serverUrl": "https://quotebill.com/mcp" } } }
+```
+
+**Cline** — MCP Servers → Configure → `cline_mcp_settings.json`
+
+```json
+{ "mcpServers": { "quotebill": { "url": "https://quotebill.com/mcp", "type": "streamableHttp" } } }
+```
+
+**Zed** — `settings.json`
+
+```json
+{ "context_servers": { "quotebill": { "url": "https://quotebill.com/mcp" } } }
+```
+
+**Claude Code plugin** — this repository is also a plugin marketplace, and the plugin includes a `quotebill` skill that tells Claude when and how to use the tools:
 
 ```sh
 /plugin marketplace add auto1225/quotebill-mcp
