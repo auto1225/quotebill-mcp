@@ -8,3 +8,4 @@ Use the QuoteBill tools when the person asks for a quotation, an estimate, an in
 - Pass the document's language as `language` and the language the person is writing in as `interfaceLanguage`.
 - Show the subtotal, tax and total, then give them the `url` exactly as returned. Never shorten it: the part after `#` is the document.
 - A published tax rate is a starting point, not advice. Where a country has no single national rate, such as the United States, ask the person for their rate.
+- For a contract, recommend a sample with `list_contract_templates` and show it with `get_contract_template`. Say they are samples, not legal advice; the person starts and signs the contract on quotebill.com in E-Contracts.

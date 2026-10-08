@@ -1,7 +1,7 @@
 {
   "name": "quotebill",
-  "version": "2.5.0",
-  "description": "Draft quotations, invoices and eight more business documents with QuoteBill: 225 templates, tax rules for 195 countries with sources, totals, the next document in the flow, and a link that opens the finished document.",
+  "version": "2.6.0",
+  "description": "Draft quotations, invoices and eight more business documents with QuoteBill: 261 templates, tax rules for 195 countries with sources, totals, the next document in the flow, and a link that opens the finished document.",
   "author": { "name": "QuoteBill", "email": "auto0104@gmail.com", "url": "https://quotebill.com" },
   "homepage": "https://quotebill.com/en/guides/connect-ai-assistants/",
   "repository": "https://github.com/auto1225/quotebill-mcp",

@@ -5,9 +5,11 @@
 Draft quotations, invoices and the other documents of a sale from the AI assistant you already use. QuoteBill's remote MCP server gives ChatGPT, Claude, Gemini and any other MCP client:
 
 - **Ten kinds of document**: quotation, invoice, proforma invoice, receipt, credit note, purchase order, delivery note, work order, statement of account and commercial invoice
-- **225 templates** for trades, professional services, countries and languages, covering every kind
+- **261 templates** for trades, professional services, countries and languages, covering every kind
 - **Tax rules for 195 countries**, each with the official source it was read from and the date it was checked
 - **Totals** worked out with the same arithmetic as the QuoteBill editor, rounded to the currency
+- **119 sample contracts** (service, freelance, supply, non-disclosure and more) to read and recommend; a contract itself is started and signed on quotebill.com in E-Contracts, never through the assistant
+- **Tax and currency calculators**: add or remove VAT/GST, and convert amounts with the ECB's daily rates
 - **A link to the finished document**: `build_document` returns a URL that opens the drafted document, filled in, on [quotebill.com](https://quotebill.com), ready to download as Excel or Word or to save as a PDF
 - **The next document in the flow**: `next_document` turns a drafted quotation into its invoice, an invoice into its receipt, credit note or delivery note, and so on, keeping the parties, lines, tax and language
 
@@ -70,7 +72,25 @@ Then run `/mcp auth quotebill` once to sign in.
 { "servers": { "quotebill": { "type": "http", "url": "https://quotebill.com/mcp" } } }
 ```
 
-**Claude Code plugin** — this repository is also a plugin marketplace:
+**Windsurf** — `~/.codeium/windsurf/mcp_config.json`
+
+```json
+{ "mcpServers": { "quotebill": { "serverUrl": "https://quotebill.com/mcp" } } }
+```
+
+**Cline** — MCP Servers → Configure → `cline_mcp_settings.json`
+
+```json
+{ "mcpServers": { "quotebill": { "url": "https://quotebill.com/mcp", "type": "streamableHttp" } } }
+```
+
+**Zed** — `settings.json`
+
+```json
+{ "context_servers": { "quotebill": { "url": "https://quotebill.com/mcp" } } }
+```
+
+**Claude Code plugin** — this repository is also a plugin marketplace, and the plugin includes a `quotebill` skill that tells Claude when and how to use the tools:
 
 ```sh
 /plugin marketplace add auto1225/quotebill-mcp
@@ -91,6 +111,11 @@ A request without a token gets `401` with `WWW-Authenticate: Bearer resource_met
 | `calculate_totals` | Adds up line items, applies discounts and the country's tax, rounding each tax component separately to the currency (the country's, or the `currency` you give). |
 | `build_document` | Builds a complete document of any of the ten kinds from line items, optionally from a template, totals it (or works out a statement's running balance) and returns a link that opens it filled in, with the documents it can become next. `language` is the document's language; `interfaceLanguage` the language the page opens in; `currency` (an ISO 4217 code) is for amounts that are not in the country's currency, such as USD on a Korean exporter's invoice: the tax stays the country's. |
 | `next_document` | Makes the next document from the link `build_document` or `next_document` returned: a quotation becomes an invoice, proforma invoice or work order; a proforma invoice an invoice, commercial invoice or prepayment receipt; an invoice a receipt, credit note or delivery note; a work order an invoice; a commercial invoice a delivery note, receipt or credit note. It keeps the parties, lines, country, tax and language, takes a new issue date and, where its kind prints a reference, names the document it came from. Only the link is read: no saved document is looked up, and nothing is saved. |
+| `calculate_tax` | The VAT and GST calculator of the tools pages: adds tax to a net amount or takes it out of a gross one at the given rate or a country's published standard rate, with an optional withholding, and says where the rate was read from. |
+| `convert_currency` | Converts an amount through the euro with the European Central Bank's daily reference rates, rounded to the target currency. Indicative, not a bank's rate. |
+| `list_contract_templates` | Lists QuoteBill's sample contracts, or finds them by words, group or whether they carry a price schedule. Samples, not legal advice; nothing is created or sent. |
+| `get_contract_template` | One sample contract by id or slug: group, summary, note, parties, clause titles and, on request, the whole English text with its blanks. |
+| `top_templates` | The document templates or sample contracts members like most, as counts only. |
 | `list_guides` | QuoteBill's how-to guides, such as converting a quote to an invoice or what a German, Japanese or Korean invoice must contain. |
 | `list_reference` | The categories, layouts, languages and country codes the other tools accept. |
 
