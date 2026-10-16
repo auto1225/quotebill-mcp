@@ -5,11 +5,12 @@
 Draft quotations, invoices and the other documents of a sale from the AI assistant you already use. QuoteBill's remote MCP server gives ChatGPT, Claude, Gemini and any other MCP client:
 
 - **Ten kinds of document**: quotation, invoice, proforma invoice, receipt, credit note, purchase order, delivery note, work order, statement of account and commercial invoice
-- **225 templates** for trades, professional services, countries and languages, covering every kind
+- **536 templates** for trades, professional services, countries and languages, covering every kind
 - **Tax rules for 195 countries**, each with the official source it was read from and the date it was checked
 - **Totals** worked out with the same arithmetic as the QuoteBill editor, rounded to the currency
 - **A link to the finished document**: `build_document` returns a URL that opens the drafted document, filled in, on [quotebill.com](https://quotebill.com), ready to download as Excel or Word or to save as a PDF
 - **The next document in the flow**: `next_document` turns a drafted quotation into its invoice, an invoice into its receipt, credit note or delivery note, and so on, keeping the parties, lines, tax and language
+- **Sample contracts and forms to read**: `list_contract_templates` and `get_contract_template` find QuoteBill's sample contracts; `search_forms` and `get_form` find forms in its Forms Top 100, such as an NDA, an employment contract or a resignation letter, with the countries and languages each comes in (samples and templates, not legal, tax or accounting advice)
 
 | | |
 |---|---|
@@ -85,14 +86,21 @@ A request without a token gets `401` with `WWW-Authenticate: Bearer resource_met
 
 | Tool | What it does |
 |---|---|
-| `search_templates` | Finds templates by words, document type or category, in the language asked for, with example line items and the page each opens on. |
-| `get_template` | The full record for one template slug. |
-| `get_tax_rule` | The published rate, its name, the currency and the source it was read from, for any of 195 countries. Countries with no single national rate, such as the United States, are reported as needing a jurisdiction instead of being given a made-up number. |
-| `calculate_totals` | Adds up line items, applies discounts and the country's tax, rounding each tax component separately to the currency (the country's, or the `currency` you give). |
-| `build_document` | Builds a complete document of any of the ten kinds from line items, optionally from a template, totals it (or works out a statement's running balance) and returns a link that opens it filled in, with the documents it can become next. `language` is the document's language; `interfaceLanguage` the language the page opens in; `currency` (an ISO 4217 code) is for amounts that are not in the country's currency, such as USD on a Korean exporter's invoice: the tax stays the country's. |
-| `next_document` | Makes the next document from the link `build_document` or `next_document` returned: a quotation becomes an invoice, proforma invoice or work order; a proforma invoice an invoice, commercial invoice or prepayment receipt; an invoice a receipt, credit note or delivery note; a work order an invoice; a commercial invoice a delivery note, receipt or credit note. It keeps the parties, lines, country, tax and language, takes a new issue date and, where its kind prints a reference, names the document it came from. Only the link is read: no saved document is looked up, and nothing is saved. |
+| `search_templates` | Finds templates by words, document type, category or country, in the language asked for, with example line items and the page each opens on. |
+| `get_template` | The full record for one template slug, with its example line items. |
+| `get_tax_rule` | The published rate, its name, the currency and the source it was read from, for any of 195 countries; where invoices may have to be e-invoices, the system. |
+| `calculate_totals` | Adds up line items, applies discounts and the country's tax, rounding each tax component separately to the currency. |
+| `build_document` | Builds a complete document of any of the ten kinds from line items, optionally from a template, and returns a link that opens it filled in on quotebill.com. |
+| `next_document` | Makes the next document from the link `build_document` or `next_document` returned: a quotation becomes an invoice, an invoice a receipt, and so on. |
+| `calculate_tax` | The VAT and GST calculator: adds tax to a net amount or takes it out of a gross one, with an optional withholding, rounded to the currency. |
+| `convert_currency` | Converts an amount through the euro with the European Central Bank's daily reference rates; indicative, not a bank's rate. |
+| `list_contract_templates` | Lists or finds QuoteBill's sample contracts by words, group or whether they carry a price schedule. |
+| `get_contract_template` | One sample contract by id or slug: its group, summary, parties and clause titles, and on request its English text. A sample, not legal advice. |
+| `search_forms` | Finds forms in QuoteBill's Forms Top 100 by words, part of the list, country or language, with the page and editor link of each. A form is a template, not legal, tax or accounting advice. |
+| `get_form` | One form of the Forms Top 100 by id: its kind, summary, the countries and languages it comes in and the designs it can be drawn in. |
+| `top_templates` | The templates or sample contracts members have liked most, with counts only. |
 | `list_guides` | QuoteBill's how-to guides, such as converting a quote to an invoice or what a German, Japanese or Korean invoice must contain. |
-| `list_reference` | The categories, layouts, languages and country codes the other tools accept. |
+| `list_reference` | The categories, layouts, languages and country codes the other tools accept, the groups of the sample contracts and the parts of the Forms Top 100. |
 
 Every tool publishes an `inputSchema` and an `outputSchema`, and is annotated `readOnlyHint: true`, `destructiveHint: false`, `idempotentHint: true`, `openWorldHint: false`. Invalid arguments come back as a tool error that says what to correct.
 
