@@ -1,0 +1,31 @@
+# Watches quotebill.com from outside its own network: every 15 minutes it asks for the version file, the English home page,
+# robots.txt and the MCP endpoint (an unsigned tools/list must answer 401, which is how a healthy server answers).
+# A failed run makes GitHub email the person who last edited this schedule.
+name: Site heartbeat
+
+on:
+  schedule:
+    - cron: '7,22,37,52 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  heartbeat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Version file, home page, robots.txt
+        run: |
+          set -euo pipefail
+          curl -fsS --max-time 30 --retry 3 --retry-delay 20 https://quotebill.com/version.json | grep -q '"version"'
+          curl -fsS --max-time 30 --retry 3 --retry-delay 20 -o /dev/null https://quotebill.com/en/
+          curl -fsS --max-time 30 --retry 3 --retry-delay 20 https://quotebill.com/robots.txt | grep -q 'Sitemap:'
+      - name: MCP endpoint answers 401 without a token
+        run: |
+          set -euo pipefail
+          code=$(curl -sS --max-time 30 --retry 3 --retry-delay 20 -o /dev/null -w '%{http_code}' -X POST https://quotebill.com/mcp \
+            -H 'content-type: application/json' -H 'accept: application/json, text/event-stream' \
+            -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}')
+          echo "MCP answered $code"
+          test "$code" = "401"
